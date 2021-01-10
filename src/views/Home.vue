@@ -35,7 +35,7 @@ export default {
   },
   computed: {
     roomUrl () {
-      return `https://${location.hostname}?room=${this.roomId}`
+      return `https://${location.hostname}/zoom-clone?room=${this.roomId}`
     }
   },
   mounted () {
@@ -61,7 +61,6 @@ export default {
         // eslint-disable-next-line no-undef
         const client = new StringeeClient()
         client.on('authen', (result) => {
-          console.log(result)
           resolve(result)
         })
         client.connect(userToken)
@@ -124,9 +123,7 @@ export default {
 
       room.on('removetrack', e => {
         if (!e.track) return
-
-        const elements = e.track.detach()
-        elements.forEach(item => item.remove())
+        e.track.detach().forEach(item => item.remove())
       })
 
       roomData.listTracksInfo.forEach(i => this.subscribeTrack(i))
@@ -135,10 +132,7 @@ export default {
     async subscribeTrack (trackInfo) {
       const track = await this.room.subscribe(trackInfo.serverId)
 
-      track.on('ready', () => {
-        const element = track.attach()
-        this.addVideo(element)
-      })
+      track.on('ready', () => this.addVideo(track.attach()))
     },
     addVideo (video) {
       video.setAttribute('controls', 'true')

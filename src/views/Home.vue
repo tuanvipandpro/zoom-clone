@@ -1,18 +1,20 @@
 <template>
   <div class="home">
     <h1>Clone Zoom - Meeting Online</h1>
-    <!-- <p>{{roomId}} </p>
-    <p>{{roomToken}}</p> -->
 
     <el-button v-if="!roomId" @click="createRoom">Create Room</el-button>
     <el-button v-if="!roomId" @click="joinRoom">Join Room</el-button>
     <el-button v-else @click="publishVideo(true)">Share Screen</el-button>
 
     <div id="share" v-if="roomId">
-      <p>Share Link : <el-link :href="roomUrl" type="success">{{ roomUrl }}</el-link></p>
+      <p>
+        Share Link : <el-link id="share-link" :href="roomUrl" type="success">{{ roomUrl }} </el-link>
+        <!-- <input id="share-link" :value="roomUrl"/> -->
+        <el-button @click="copyToClipboard" style="margin-left: 3px" icon="el-icon-document-copy" type="text"></el-button>
+      </p>
       <p>Room Id: {{ roomId }}</p>
     </div>
-   <div id="video-container"></div>
+    <div id="video-container"></div>
   </div>
 </template>
 
@@ -35,7 +37,9 @@ export default {
   },
   computed: {
     roomUrl () {
-      return `https://${location.hostname}/zoom-clone?room=${this.roomId}`
+      return location.hostname === 'localhost'
+        ? `https://${location.hostname}:8080/#/zoom-clone?room=${this.roomId}`
+        : `https://${location.hostname}/zoom-clone?room=${this.roomId}`
     }
   },
   mounted () {
@@ -50,6 +54,18 @@ export default {
     }
   },
   methods: {
+    copyToClipboard () {
+      const str = document.getElementById('share-link').href
+      const el = document.createElement('textarea')
+      el.value = str
+      el.setAttribute('readonly', '')
+      el.style.position = 'absolute'
+      el.style.left = '-9999px'
+      document.body.appendChild(el)
+      el.select()
+      document.execCommand('copy')
+      document.body.removeChild(el)
+    },
     fakeLogin () {
       // eslint-disable-next-line no-async-promise-executor
       return new Promise(async (resolve, reject) => {

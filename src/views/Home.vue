@@ -2,8 +2,8 @@
   <div class="home">
     <h1>Clone Zoom - Meeting Online</h1>
 
-    <el-button v-if="!roomId" @click="createRoom">Create Room</el-button>
-    <el-button v-if="!roomId" @click="joinRoom">Join Room</el-button>
+    <el-button v-if="!roomId" type="success" @click="createRoom" plain>Create Room</el-button>
+    <el-button v-if="!roomId" @click="joinRoom" type="primary" plain>Join Room</el-button>
     <el-button v-else @click="publishVideo(true)">Share Screen</el-button>
 
     <div id="share" v-if="roomId">
